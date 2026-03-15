@@ -13,13 +13,17 @@ function analyzeCode(code, fileName) {
 
     const isJS = fileName.endsWith('.js') || fileName.endsWith('.ts');
     const isPython = fileName.endsWith('.py');
+    const isCpp = fileName.endsWith('.cpp') || fileName.endsWith('.h') || fileName.endsWith('.hpp') || fileName.endsWith('.cs') || fileName.endsWith('.java');
+    const isGo = fileName.endsWith('.go');
 
-    // Basic regex patterns
+    // Basic regex patterns for functions/methods
     const jsFuncRegex = /^\s*(function\s+\w+|const\s+\w+\s*=\s*(function|\([^)]*\)\s*=>)|let\s+\w+\s*=\s*(function|\([^)]*\)\s*=>)|class\s+\w+|\w+\s*\([^)]*\)\s*\{)/;
     const pyFuncRegex = /^\s*(def\s+\w+|class\s+\w+)/;
+    const cppFuncRegex = /^\s*(?:[a-zA-Z_][a-zA-Z0-9_<>]*(?:\s+|[*&]+\s*))+(?:[a-zA-Z_][a-zA-Z0-9_]*::)?[a-zA-Z_][a-zA-Z0-9_]*\s*\([^)]*\)\s*(?:const)?\s*(?:\{|:)/;
+    const goFuncRegex = /^\s*func\s+(?:\([^)]+\)\s+)?\w+\s*\(/;
     
     // Comments
-    const jsCommentRegex = /^\s*(\/\/|\/\*|\*)/;
+    const jsCommentRegex = /^\s*(\/\/|\/\*|\*)/; // Works for JS, TS, C++, Java, Go
     const pyCommentRegex = /^\s*#/;
 
     // Complexity indicators (basic keywords)
@@ -36,8 +40,8 @@ function analyzeCode(code, fileName) {
             return;
         }
 
-        // Count JS Block comments /* ... */
-        if (isJS) {
+        // Count JS/C++/Go Block comments /* ... */
+        if (isJS || isCpp || isGo) {
             if (trimmed.startsWith('/*')) inBlockComment = true;
             if (inBlockComment) {
                 comments++;
@@ -47,7 +51,7 @@ function analyzeCode(code, fileName) {
         }
 
         // Count line comments
-        if (isJS && jsCommentRegex.test(trimmed)) {
+        if ((isJS || isCpp || isGo) && jsCommentRegex.test(trimmed)) {
             comments++;
             return;
         } else if (isPython && pyCommentRegex.test(trimmed)) {
@@ -60,6 +64,12 @@ function analyzeCode(code, fileName) {
             functions++;
             complexityScore++; // Functions add to complexity
         } else if (isPython && pyFuncRegex.test(trimmed)) {
+            functions++;
+            complexityScore++;
+        } else if (isCpp && cppFuncRegex.test(trimmed)) {
+            functions++;
+            complexityScore++;
+        } else if (isGo && goFuncRegex.test(trimmed)) {
             functions++;
             complexityScore++;
         }
