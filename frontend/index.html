@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Quality Analyzer Dashboard</title>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="particles-bg" id="particles-bg"></div>
+
+    <div class="dashboard-container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <h1 class="glow-text">Code Quality <span class="accent">Analyzer</span></h1>
+            <p class="subtitle">Analyze your code instantly with modern developer insights.</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="content-grid">
+            
+            <!-- Left Column: Upload & Code Preview -->
+            <div class="left-panel">
+                <!-- Drop Zone -->
+                <div class="upload-card glass-panel" id="drop-zone">
+                    <input type="file" id="file-input" accept=".js,.ts,.py" hidden>
+                    <div class="upload-content">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon glow"></i>
+                        <h3>Drag & Drop your code file</h3>
+                        <p>or <button class="btn-browse" id="btn-browse">browse files</button></p>
+                        <p class="file-types">Supports: .js, .ts, .py</p>
+                    </div>
+                </div>
+
+                <!-- Terminal Loader (Hidden by default) -->
+                <div class="terminal-loader hidden" id="terminal-loader">
+                    <div class="window-controls">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="terminal-content" id="terminal-text">
+                        <p>> Initializing analysis engine...</p>
+                    </div>
+                </div>
+
+                <!-- Code Preview (Hidden by default) -->
+                <div class="code-preview glass-panel hidden" id="code-preview-panel">
+                    <div class="panel-header">
+                        <i class="fa-solid fa-code"></i>
+                        <span id="preview-filename">source.js</span>
+                    </div>
+                    <pre><code id="code-content"></code></pre>
+                </div>
+            </div>
+
+            <!-- Right Column: Metrics & Charts -->
+            <div class="right-panel">
+                
+                <!-- Metrics Grid -->
+                <div class="metrics-grid hidden" id="metrics-grid">
+                    <!-- Cards will be populated dynamically -->
+                    <div class="metric-card glass-panel tooltip" data-tooltip="Total lines including empty and comments">
+                        <div class="metric-icon blue"><i class="fa-solid fa-list-ol"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Lines of Code</span>
+                            <span class="metric-value counter" data-target="0" id="val-lines">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card glass-panel tooltip" data-tooltip="Number of defined functions or classes">
+                        <div class="metric-icon purple"><i class="fa-solid fa-boxes-stacked"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Functions</span>
+                            <span class="metric-value counter" data-target="0" id="val-functions">0</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card glass-panel tooltip" data-tooltip="Number of commented lines">
+                        <div class="metric-icon green"><i class="fa-solid fa-comment-dots"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Comments</span>
+                            <span class="metric-value counter" data-target="0" id="val-comments">0</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card glass-panel tooltip" data-tooltip="Empty lines without code">
+                        <div class="metric-icon gray"><i class="fa-regular fa-square"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Blank Lines</span>
+                            <span class="metric-value counter" data-target="0" id="val-blank">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Complexity Score (Full Width) -->
+                    <div class="metric-card glass-panel complexity-card full-width tooltip" data-tooltip="Estimated score based on control structures (0-100)">
+                        <div class="metric-icon red glow"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Complexity Score</span>
+                            <div class="complexity-wrapper">
+                                <span class="metric-value counter large" data-target="0" id="val-complexity">0</span>
+                                <span class="score-suffix">/ 100</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="complexity-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-container hidden" id="charts-container">
+                    <div class="chart-card glass-panel">
+                        <h3>Code Distribution</h3>
+                        <div class="chart-wrapper pie-chart">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card glass-panel">
+                        <h3>Metrics Overview</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
